@@ -194,6 +194,7 @@ def main():
             
             # Handle special commands
             if user_input.lower() in ['quit', 'exit', 'q']:
+                resume_bot.end_conversation()
                 print("👋 Goodbye!")
                 break
             elif user_input.lower() == 'help':

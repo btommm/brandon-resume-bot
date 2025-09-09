@@ -26,6 +26,7 @@ class ResumeBot:
         self.conversation_history = []
         self.session_id = None
         self.conversation_trace = None
+        self.trace_context = None
         self._load_documents()
         self._initialize_agent()
     
@@ -97,29 +98,25 @@ class ResumeBot:
             return "Please ask me a question about Brandon's background, experience, or skills!"
         
         try:
-            # Use session-based tracing to group all interactions in this conversation
-            if not self.session_id:
+            # Ensure we have a session and trace context
+            if not self.session_id or not self.trace_context:
                 self.start_new_conversation()
             
-            session_trace_name = f"Brandon Resume Bot - Session {self.session_id[:8]}"
+            # Use Runner within the existing trace context (no new trace created)
+            result = await Runner.run(
+                self.agent,
+                user_message,
+                # The SDK automatically handles conversation context and tracing
+            )
             
-            # Use the SDK's trace functionality for proper tracing
-            with trace(session_trace_name):
-                # Use Runner to execute the agent with the user message
-                result = await Runner.run(
-                    self.agent,
-                    user_message,
-                    # The SDK automatically handles conversation context and tracing
-                )
-                
-                # Extract the response
-                bot_response = result.final_output.strip()
-                
-                # Update conversation history for analytics
-                self.conversation_history.append({"role": "user", "content": user_message})
-                self.conversation_history.append({"role": "assistant", "content": bot_response})
-                
-                return bot_response
+            # Extract the response
+            bot_response = result.final_output.strip()
+            
+            # Update conversation history for analytics
+            self.conversation_history.append({"role": "user", "content": user_message})
+            self.conversation_history.append({"role": "assistant", "content": bot_response})
+            
+            return bot_response
                 
         except Exception as e:
             # Handle any errors that occur during response generation
@@ -187,15 +184,22 @@ class ResumeBot:
         try:
             # Use session-based tracing if no custom trace name provided
             if trace_name is None:
-                if not self.session_id:
+                # Ensure we have a session and trace context
+                if not self.session_id or not self.trace_context:
                     self.start_new_conversation()
-                trace_name = f"Brandon Resume Bot - Session {self.session_id[:8]}"
-            
-            with trace(trace_name):
+                
+                # Use existing trace context
                 result = await Runner.run(
                     self.agent,
                     user_message,
                 )
+            else:
+                # Use custom trace name
+                with trace(trace_name):
+                    result = await Runner.run(
+                        self.agent,
+                        user_message,
+                    )
                 
                 bot_response = result.final_output.strip()
                 
@@ -225,8 +229,21 @@ class ResumeBot:
     
     def start_new_conversation(self):
         """Start a new conversation session with a unique trace"""
+        # Close previous trace if exists
+        if self.trace_context:
+            try:
+                self.trace_context.__exit__(None, None, None)
+            except:
+                pass
+        
         self.session_id = str(uuid.uuid4())
         self.conversation_history = []
+        
+        # Create a persistent trace context for the entire session
+        session_trace_name = f"Brandon Resume Bot - Session {self.session_id[:8]}"
+        self.trace_context = trace(session_trace_name)
+        self.trace_context.__enter__()
+        
         print(f"🆕 Started new conversation session: {self.session_id[:8]}...")
         return self.session_id
     
@@ -243,6 +260,17 @@ class ResumeBot:
         
         message_count = len(self.conversation_history) // 2
         return f"Conversation with {message_count} exchanges"
+    
+    def end_conversation(self):
+        """End the current conversation and close the trace context"""
+        if self.trace_context:
+            try:
+                self.trace_context.__exit__(None, None, None)
+                self.trace_context = None
+                print(f"🔚 Ended conversation session: {self.session_id[:8] if self.session_id else 'Unknown'}...")
+            except:
+                pass
+        self.session_id = None
     
     def reinitialize_agent(self):
         """Reinitialize the agent (useful if documents change)"""
