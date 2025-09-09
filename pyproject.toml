@@ -1,0 +1,30 @@
+[tool.poetry]
+name = "brandon-bot"
+version = "0.1.0"
+description = "AI chat interface for interviews using OpenAI and Gradio"
+authors = ["Brandon <your-email@example.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+# AI and API dependencies
+openai = "^1.0.0"
+# Web interface framework
+gradio = "^4.0.0"
+# Environment variable management
+python-dotenv = "^1.0.0"
+# Document processing libraries
+PyPDF2 = "^3.0.0"
+python-docx = "^0.8.11"
+# OpenAI Agents SDK for advanced AI agent functionality
+openai-agents = "^0.2.0"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.0.0"
+black = "^23.0.0"
+flake8 = "^6.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api" 
