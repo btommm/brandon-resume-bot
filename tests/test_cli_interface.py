@@ -179,6 +179,9 @@ def main():
     else:
         print("✅ Bot initialized successfully!")
     
+    # Start a new conversation session
+    session_id = resume_bot.start_new_conversation()
+    
     print("\nYou can now ask questions about Brandon's resume and background.")
     print("The bot will respond just like in the web interface.\n")
     

@@ -11,6 +11,7 @@ This module contains the main ResumeBot class that:
 
 import asyncio
 import time
+import uuid
 from typing import List, Dict, Optional
 from agents import Agent, Runner, trace
 from .config import config
@@ -23,6 +24,8 @@ class ResumeBot:
     def __init__(self):
         self.agent = None
         self.conversation_history = []
+        self.session_id = None
+        self.conversation_trace = None
         self._load_documents()
         self._initialize_agent()
     
@@ -94,8 +97,14 @@ class ResumeBot:
             return "Please ask me a question about Brandon's background, experience, or skills!"
         
         try:
+            # Use session-based tracing to group all interactions in this conversation
+            if not self.session_id:
+                self.start_new_conversation()
+            
+            session_trace_name = f"Brandon Resume Bot - Session {self.session_id[:8]}"
+            
             # Use the SDK's trace functionality for proper tracing
-            with trace("Brandon Resume Bot - User Interaction"):
+            with trace(session_trace_name):
                 # Use Runner to execute the agent with the user message
                 result = await Runner.run(
                     self.agent,
@@ -158,13 +167,13 @@ class ResumeBot:
             print(error_msg)
             return "I apologize, but I encountered an error while processing your question. Please try rephrasing or ask something else about Brandon's background."
     
-    async def generate_response_with_trace(self, user_message: str, trace_name: str = "Resume Bot Interaction") -> str:
+    async def generate_response_with_trace(self, user_message: str, trace_name: str = None) -> str:
         """
         Generate a response with custom trace name - useful for different interaction types
         
         Args:
             user_message: The user's question or comment
-            trace_name: Custom name for the trace
+            trace_name: Custom name for the trace (if None, uses session-based tracing)
             
         Returns:
             The bot's response string
@@ -176,6 +185,12 @@ class ResumeBot:
             return "Please ask me a question about Brandon's background, experience, or skills!"
         
         try:
+            # Use session-based tracing if no custom trace name provided
+            if trace_name is None:
+                if not self.session_id:
+                    self.start_new_conversation()
+                trace_name = f"Brandon Resume Bot - Session {self.session_id[:8]}"
+            
             with trace(trace_name):
                 result = await Runner.run(
                     self.agent,
@@ -208,8 +223,15 @@ class ResumeBot:
             "What frameworks and tools does Brandon use?"
         ]
     
+    def start_new_conversation(self):
+        """Start a new conversation session with a unique trace"""
+        self.session_id = str(uuid.uuid4())
+        self.conversation_history = []
+        print(f"🆕 Started new conversation session: {self.session_id[:8]}...")
+        return self.session_id
+    
     def reset_conversation(self):
-        """Reset the conversation history"""
+        """Reset the conversation history but keep the same session"""
         self.conversation_history = []
         # Note: The Agent SDK handles its own conversation context automatically
         # This method mainly affects our local tracking
