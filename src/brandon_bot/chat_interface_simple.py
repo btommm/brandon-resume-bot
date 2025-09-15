@@ -14,8 +14,7 @@ def create_interface():
         background: #1A1A1A !important;
         margin: 0 !important;
         padding: 0 !important;
-        height: 100vh !important;
-        overflow: hidden !important;
+        min-height: 100vh !important;
         color: #E0E0E0 !important;
     }
     
@@ -27,18 +26,21 @@ def create_interface():
         background: #1A1A1A;
         color: #E0E0E0;
         align-items: center;
-        justify-content: center;
-        padding: 20px;
+        justify-content: flex-start;
+        padding: 0;
+        gap: 0;
     }
     
     /* Header */
     .header {
         background: linear-gradient(180deg, #2A2A2A 0%, #1A1A1A 100%);
-        padding: 20px;
+        padding: 12px 20px;
         text-align: center;
         border-bottom: 1px solid #333333;
         width: 100%;
+        box-sizing: border-box;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        flex-shrink: 0;
     }
     
     .title {
@@ -56,18 +58,20 @@ def create_interface():
         opacity: 0.7;
     }
     
-    /* Chat area - centered, compact */
+    /* Chat area - centered, larger */
     .chat-area {
         display: flex;
         flex-direction: column;
-        max-width: 1600px;
+        max-width: 1800px;
         width: 100%;
-        padding: 20px;
+        padding: 10px 20px;
         box-sizing: border-box;
         margin: 0 auto;
         align-items: center;
-        justify-content: center;
+        justify-content: flex-start;
+        flex-grow: 1;
         min-height: 0;
+        gap: 10px;
     }
     
     /* Chatbot messages */
@@ -111,13 +115,15 @@ def create_interface():
         padding: 12px 20px !important;
         border-top: 1px solid #333333 !important;
         width: 100%;
-        max-width: 1600px;
+        max-width: 1800px;
         box-sizing: border-box;
         display: flex;
         flex-direction: row;
         align-items: center;
         justify-content: center;
         gap: 10px;
+        flex-shrink: 0;
+        margin: 0 auto;
     }
     
     /* Text input - taller and wider */
@@ -195,7 +201,19 @@ def create_interface():
         border-radius: 4px;
     }
     
-    /* Responsive */
+    /* Responsive design and HF compatibility */
+    @media (max-width: 1200px) {
+        .chat-area {
+            max-width: 95%;
+            padding: 10px 15px;
+        }
+        
+        .input-area {
+            max-width: 95%;
+            padding: 10px 15px !important;
+        }
+    }
+    
     @media (max-width: 768px) {
         .chat-area {
             padding: 10px;
@@ -224,6 +242,17 @@ def create_interface():
         .title {
             font-size: 24px;
         }
+        
+        .chatbot-interface {
+            height: 300px !important;
+        }
+    }
+    
+    /* Hugging Face specific fixes */
+    body {
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow-x: hidden !important;
     }
     """
     
@@ -271,7 +300,7 @@ def create_interface():
                          "role": "assistant", 
                          "content": "👋 Hi! I'm Brandon-Bot, your AI assistant for learning about Brandon's professional background. Ask me about his skills, experience, projects, or anything else related to his career!"
                      }],
-                     height=780,
+                     height=800,
                      show_label=False,
                      container=True,
                      elem_classes="chatbot-interface",
