@@ -9,8 +9,9 @@ readme = "README.md"
 python = "^3.9"
 # AI and API dependencies
 openai = "^1.0.0"
-# Web interface framework
-gradio = "^4.0.0"
+# Web interface framework - using latest version
+# NOTE: Previous schema bugs in 4.x series resolved in 5.x
+gradio = "^5.0.0"
 # Environment variable management
 python-dotenv = "^1.0.0"
 # Document processing libraries

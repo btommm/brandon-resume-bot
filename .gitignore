@@ -47,12 +47,21 @@ venv.bak/
 ehthumbs.db
 Thumbs.db
 
-# Project specific
-# Personal resume documents - DO NOT COMMIT
+# Project specific - Personal documents
+# Personal resume documents - DO NOT COMMIT to GitHub
 data/*.pdf
 data/*.docx
 data/*.doc
 data/*.txt
+
+# Keep ignoring sensitive files:
+data/*_private.*
+data/secrets.*
+
+# Development vs Deployment files
+# Keep both requirements files for different purposes:
+# requirements.txt - for local development (if different from HF)
+# requirements_hf.txt - for Hugging Face deployment
 
 # Logs
 *.log
