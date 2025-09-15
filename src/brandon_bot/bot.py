@@ -186,6 +186,9 @@ class ResumeBot:
             if trace_name is None:
                 # Ensure we have a session and trace context
                 if not self.session_id or not self.trace_context:
+
+
+                    
                     self.start_new_conversation()
                 
                 # Use existing trace context
