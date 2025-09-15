@@ -19,15 +19,16 @@ def create_interface():
         color: #E0E0E0 !important;
     }
     
-    /* Main container - full screen, centered */
+    /* Main container - compact, centered */
     .chat-app {
         display: flex;
         flex-direction: column;
-        height: 100vh;
+        min-height: 100vh;
         background: #1A1A1A;
         color: #E0E0E0;
         align-items: center;
-        justify-content: flex-start;
+        justify-content: center;
+        padding: 20px;
     }
     
     /* Header */
@@ -55,17 +56,18 @@ def create_interface():
         opacity: 0.7;
     }
     
-    /* Chat area - scrollable, wider, centered */
+    /* Chat area - centered, compact */
     .chat-area {
-        flex: 1;
         display: flex;
         flex-direction: column;
         max-width: 1600px;
         width: 100%;
         padding: 20px;
-        overflow-y: auto;
         box-sizing: border-box;
-        margin-bottom: 10px;
+        margin: 0 auto;
+        align-items: center;
+        justify-content: center;
+        min-height: 0;
     }
     
     /* Chatbot messages */
@@ -264,29 +266,31 @@ def create_interface():
             """)
             
             with gr.Column(elem_classes="chat-area"):
-                chatbot = gr.Chatbot(
-                    value=[{
-                        "role": "assistant", 
-                        "content": "👋 Hi! I'm Brandon-Bot, your AI assistant for learning about Brandon's professional background. Ask me about his skills, experience, projects, or anything else related to his career!"
-                    }],
-                    height="100%",
-                    show_label=False,
-                    container=True,
-                    elem_classes="chatbot-interface",
-                    type="messages"
-                )
-            
-            with gr.Row(elem_classes="input-area"):
-                msg = gr.Textbox(
-                    placeholder="Ask about Brandon's skills, projects, or experience...",
-                    container=False,
-                    show_label=False,
-                    lines=3,
-                    max_lines=5
-                )
-                send_btn = gr.Button("Send")
-            
-            clear_btn = gr.Button("Clear Chat", elem_classes="clear-btn", size="sm")
+                 chatbot = gr.Chatbot(
+                     value=[{
+                         "role": "assistant", 
+                         "content": "👋 Hi! I'm Brandon-Bot, your AI assistant for learning about Brandon's professional background. Ask me about his skills, experience, projects, or anything else related to his career!"
+                     }],
+                     height=780,
+                     show_label=False,
+                     container=True,
+                     elem_classes="chatbot-interface",
+                     type="messages",
+                     autoscroll=True
+                 )
+                 
+                 with gr.Row(elem_classes="input-area"):
+                     msg = gr.Textbox(
+                         placeholder="Ask about Brandon's skills, projects, or experience...",
+                         container=False,
+                         show_label=False,
+                         lines=1,
+                         max_lines=1,
+                         scale=8
+                     )
+                     send_btn = gr.Button("Send", scale=1)
+                 
+                 clear_btn = gr.Button("Clear Chat", elem_classes="clear-btn", size="sm")
         
         msg.submit(chat_function, [msg, chatbot], [chatbot, msg])
         send_btn.click(chat_function, [msg, chatbot], [chatbot, msg])
