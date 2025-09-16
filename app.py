@@ -28,9 +28,7 @@ def main():
     if is_huggingface:
         # Hugging Face Spaces settings
         demo.launch(
-            server_name="0.0.0.0",   # Required for HF
-            server_port=7860,        # HF default port
-            share=False,
+            share=True,              # Required for HF when localhost not accessible
             show_error=True,
             show_api=False
         )
