@@ -58,19 +58,11 @@ def create_interface():
         opacity: 0.7;
     }
     
-<<<<<<< HEAD
     /* Chat area - centered, larger */
     .chat-area {
         display: flex;
         flex-direction: column;
         max-width: 1800px;
-=======
-    /* Chat area - centered, compact */
-    .chat-area {
-        display: flex;
-        flex-direction: column;
-        max-width: 1200px;
->>>>>>> b8a42f88e83fa784c772eee28fc7e42562d32cee
         width: 100%;
         padding: 10px 20px;
         box-sizing: border-box;
@@ -123,11 +115,7 @@ def create_interface():
         padding: 12px 20px !important;
         border-top: 1px solid #333333 !important;
         width: 100%;
-<<<<<<< HEAD
         max-width: 1800px;
-=======
-        max-width: 1200px;
->>>>>>> b8a42f88e83fa784c772eee28fc7e42562d32cee
         box-sizing: border-box;
         display: flex;
         flex-direction: row;
