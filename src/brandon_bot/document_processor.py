@@ -18,17 +18,45 @@ class DocumentProcessor:
         self.processed_content = ""
         
     def load_all_documents(self) -> Dict[str, str]:
-        """Load all documents from the data directory"""
+        """Load all documents from the data directory or environment variables"""
         documents = {}
-        data_dir = config.DATA_DIR
         
+        # First, try to load from environment variables (for HF Spaces secrets)
+        env_content = self._load_from_environment()
+        if env_content:
+            documents.update(env_content)
+            print("📄 Loaded resume content from environment variables (secure)")
+        
+        # Then, try to load from data directory (for local development)
+        data_dir = config.DATA_DIR
         if os.path.exists(data_dir):
-            documents.update(self._scan_directory(data_dir))
+            file_documents = self._scan_directory(data_dir)
+            documents.update(file_documents)
+            if file_documents:
+                print(f"📁 Loaded documents from files: {list(file_documents.keys())}")
         else:
             print(f"Warning: {data_dir} directory not found")
         
+        if not documents:
+            print("⚠️ No resume content found in files or environment variables")
+        
         self.documents = documents
         self.processed_content = self._combine_documents(documents)
+        return documents
+    
+    def _load_from_environment(self) -> Dict[str, str]:
+        """Load resume content from environment variables (HF Spaces secrets)"""
+        documents = {}
+        
+        # Simple text content from environment variables
+        resume_text = os.getenv("RESUME_TEXT")
+        if resume_text:
+            documents["resume_from_env"] = resume_text
+        
+        context_text = os.getenv("CONTEXT_TEXT") 
+        if context_text:
+            documents["context_from_env"] = context_text
+        
         return documents
     
     def _scan_directory(self, directory: str) -> Dict[str, str]:

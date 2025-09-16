@@ -17,12 +17,6 @@ def signal_handler(signum, frame):
 def main():
     """Main function to launch the resume bot"""
     
-    # Check for required environment variable (important for HF deployment)
-    if not os.getenv("OPENAI_API_KEY"):
-        print("❌ ERROR: OPENAI_API_KEY environment variable not set!")
-        print("Please set your OpenAI API key.")
-        return
-    
     print("🚀 Starting Brandon-Bot...")
     
     # Create the Gradio interface
@@ -64,4 +58,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
