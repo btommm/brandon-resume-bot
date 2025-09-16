@@ -266,6 +266,10 @@ def create_interface():
         
         try:
             bot_response = resume_bot.generate_response(message)
+            # Privacy filter - check for email addresses
+            import re
+            if re.search(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b', bot_response):
+                bot_response = "I can provide information about Brandon's professional background, but for contact information, please connect with him on LinkedIn or other professional networking platforms."
         except Exception as e:
             bot_response = f"Error: Unable to generate response. {str(e)}"
         
@@ -278,7 +282,7 @@ def create_interface():
         resume_bot.reset_conversation()
         return [{
             "role": "assistant", 
-            "content": "👋 Hi! I'm Brandon-Bot, your AI assistant for learning about Brandon's professional background. Ask me about his skills, experience, projects, or anything else related to his career!"
+            "content": "👋 Hi! I'm Brandon-Bot. Ask me about Brandon's skills, experience, or projects!"
         }], ""
     
     with gr.Blocks(
@@ -298,14 +302,17 @@ def create_interface():
                  chatbot = gr.Chatbot(
                      value=[{
                          "role": "assistant", 
-                         "content": "👋 Hi! I'm Brandon-Bot, your AI assistant for learning about Brandon's professional background. Ask me about his skills, experience, projects, or anything else related to his career!"
+                         "content": "👋 Hi! I'm Brandon-Bot. Ask me about Brandon's skills, experience, or projects!"
                      }],
                      height=800,
                      show_label=False,
                      container=True,
                      elem_classes="chatbot-interface",
                      type="messages",
-                     autoscroll=True
+                     autoscroll=True,
+                     # Optimize for HF deployment
+                     max_height=800,
+                     render_markdown=True
                  )
                  
                  with gr.Row(elem_classes="input-area"):

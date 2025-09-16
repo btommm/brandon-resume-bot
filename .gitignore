@@ -48,11 +48,12 @@ ehthumbs.db
 Thumbs.db
 
 # Project specific - Personal documents
-# Personal resume documents - DO NOT COMMIT to GitHub
-data/*.pdf
-data/*.docx
-data/*.doc
-data/*.txt
+# Personal resume documents - CURRENTLY ALLOWING COMMITS TO GITHUB
+# data/*.pdf
+# data/*.docx
+# data/*.doc
+# data/*.txt
+# data/*.md
 
 # Keep ignoring sensitive files:
 data/*_private.*

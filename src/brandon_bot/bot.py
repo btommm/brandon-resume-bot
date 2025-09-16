@@ -59,14 +59,27 @@ class ResumeBot:
             print(f"Error loading documents: {e}")
     
     def _build_system_instructions(self) -> str:
-        """Build the system instructions with document context"""
+        """Build the system instructions with structured document context"""
         base_instructions = config.SYSTEM_PROMPT
         
-        # Add document context
-        context = document_processor.processed_content
-        if context:
-            print(f"📄 Adding resume content to prompt ({len(context)} characters)")
-            base_instructions += f"\n\nHere is Brandon's resume and professional information:\n\n{context}"
+        # Get individual documents for better structure
+        documents = document_processor.documents
+        if documents:
+            base_instructions += "\n\n=== BRANDON'S PROFESSIONAL INFORMATION ===\n"
+            
+            # Add each document with clear labeling
+            for doc_name, content in documents.items():
+                if "resume" in doc_name.lower() or "cv" in doc_name.lower():
+                    base_instructions += f"\n📄 RESUME CONTENT:\n{content}\n"
+                elif "context" in doc_name.lower():
+                    base_instructions += f"\n💼 ADDITIONAL PROFESSIONAL CONTEXT:\n{content}\n"
+                else:
+                    base_instructions += f"\n📋 {doc_name.upper()}:\n{content}\n"
+            
+            base_instructions += "\n=== END OF PROFESSIONAL INFORMATION ===\n"
+            base_instructions += "\nWhen answering questions, reference specific details from the above information. Be specific about Brandon's experience, skills, and achievements."
+            
+            print(f"📄 Loaded {len(documents)} documents into structured prompt")
         else:
             print("⚠️  WARNING: No resume content found to add to prompt!")
         
