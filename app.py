@@ -32,8 +32,7 @@ def main():
             server_port=7860,        # HF default port
             share=False,
             show_error=True,
-            show_api=False,
-            prevent_thread_lock=False
+            show_api=False
         )
     else:
         # Local development settings
@@ -44,8 +43,7 @@ def main():
                 server_port=7862,
                 share=False,
                 show_error=True,
-                show_api=False,
-                prevent_thread_lock=False
+                show_api=False
             )
         except KeyboardInterrupt:
             print("\n👋 Received interrupt signal...")
